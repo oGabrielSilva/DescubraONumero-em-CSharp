@@ -9,15 +9,19 @@ namespace GuessingGameProject
 {
     internal class Game
     {
-        private bool _game = true;
-        private Random rdn = new Random();
-        private Menu menu = new Menu();
-        private readonly int[] _attempts = { 15, 10, 5 };
-        private int _attempt;
-        private int _userProp;
+        private bool _game = true;                          //Controlador do game global;
+        private Random rdn = new Random();                  //Atributo de aleatoriedade;
+        private Menu menu = new Menu();                     //Atribuição do Menu;
+        private readonly int[] _attempts = { 15, 10, 5 };   //Possíveis chaces que o usuário pode ter;
+        private int _attempt;                               //Número que deve ser adivinhado estará aqui;
+        private int _userAttempt;                           //As chances do usuário estarão aqui;
+        private int _userProp;                              //Proposta de resposta do usuário;
+        private int _score = 3000;                           //Pontuação que vai diminuindo;
 
         public int Start()
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             do
             {
                 //Iniciamo o menu;
@@ -58,7 +62,7 @@ namespace GuessingGameProject
                         closeGameToUpper == "S"
                     )
                     {
-                        this.Set_Game(false);
+                        this.Set_Game = false;
                         return 1;
                     }
 
@@ -72,10 +76,81 @@ namespace GuessingGameProject
                 this.Attempt = this.ReturnNumAttempt();
 
                 //Começando o jogo;
+                Console.WriteLine("\n\tADIVINHE O NÚMERO!!");
+                Console.WriteLine("\n\n\t___________________\n\n");
 
-                return 1;
+                do
+                {
+                    Console.Write("\tEscolha um número: ");
+                    Console.Write(this.Attempt);
+                    try
+                    {
+                        this.UserProp = Convert.ToInt32(Console.ReadLine());
+
+                        if (this.UserProp == this.Attempt)
+                        {
+                            Console.Clear();
+                            Console.WriteLine($"\n\n\tPERFEITO!! O número era {this.Attempt}, você acertou. Parábens!!\n");
+
+                            if(this.Score == 3000)
+                            {
+                                Console.Write("\t===================\n");
+                                Console.Write("\t  DE PRIMEIRA!!!!\n");
+                                Console.Write("\t===================\n");
+                                Console.Write("\t_/﹋\\_\n");
+                                Console.Write("\t(҂`_´) 3000 PONTOS!\n");
+                                Console.Write("\t<;︻╦╤─ ҉   -- \n");
+                                Console.WriteLine("\t===================\n");
+                            }
+
+                            if (this.Score < 10) this.Score = 10;
+                            Console.WriteLine($"\t{this.Score} Pontos! Parabéns.");
+                            bool aux = true;
+                            while (aux)
+                            {
+                                Console.Write("\n\n\tE agora?\n\n\t[1] - Novo jogo [2] - Sair");
+                                try
+                                {
+                                    int op = Convert.ToInt32(Console.ReadLine());
+                                    if (op == 1)
+                                    {
+                                        Console.Clear();
+                                        Console.ResetColor();
+                                        aux = false;
+                                        this.Set_Game = true;
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        aux = false;
+                                        this.Set_Game = false;
+                                    }
+                                }
+                                catch
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.Write("\tOpção inválida");
+                                    Console.ForegroundColor = ConsoleColor.Blue;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            string mOrM = this.UserProp > this.Attempt ? "maior" : "menor";
+                            this.Score -= 200;
+                            this.UserAttempt -= 1;
+                            Console.WriteLine($"\tO número {this.UserProp} é {mOrM}.");
+                        }
+                    }
+                    catch
+                    {
+                        Console.WriteLine("\tOpção inválida!");
+                    }
+                } while (this.UserProp != this.Attempt && this.UserAttempt > 0);
+
 
             } while (this._game);
+            return 1;
         }
 
         private void OptionInvalid()
@@ -89,6 +164,7 @@ namespace GuessingGameProject
 
         private void ShowDificult(string[] dificuld)
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Clear();
             int len = dificuld.Length;
             Console.Write("\tDificuldade escolhida: ");
@@ -96,6 +172,7 @@ namespace GuessingGameProject
             Console.WriteLine("\n\n\t" + dificuld[len - 2] + " " + dificuld[len - 1]);
             Console.WriteLine("\tTemos um número desconhecido entre 0 e 100.");
             Console.WriteLine("\tVocê tem " + this._attempts[menu.Option] + " chances! Boa sorte!");
+            this.UserAttempt = this._attempts[menu.Option];
         }
 
         private int ReturnNumAttempt()
@@ -104,9 +181,9 @@ namespace GuessingGameProject
             return i;
         }
 
-        public void Set_Game(bool value)
+        public bool Set_Game
         {
-            _game = value;
+            set => this._game = value;
         }
 
         public int Attempt
@@ -117,6 +194,18 @@ namespace GuessingGameProject
                 if (value < 0 || value > 100) this._attempt = this.rdn.Next(50);
                 else this._attempt = value;
             }
+        }
+
+        public int UserAttempt
+        {
+            get => this._userAttempt;
+            set => this._userAttempt = value;
+        }
+
+        public int Score
+        {
+            get => this._score;
+            set => this._score = value;
         }
 
         public int UserProp

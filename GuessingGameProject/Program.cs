@@ -20,6 +20,8 @@ namespace GuessingGameProject
                 gameStatus = game.Start();
             }
 
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("Obrigado por jogar :3");
             Console.ReadLine();
         }
     }
