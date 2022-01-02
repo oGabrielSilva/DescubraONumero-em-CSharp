@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using GuessingGameProject.Class;
 
 namespace GuessingGameProject
@@ -82,7 +79,7 @@ namespace GuessingGameProject
                 do
                 {
                     Console.Write("\tEscolha um número: ");
-                    Console.Write(this.Attempt);
+
                     try
                     {
                         this.UserProp = Convert.ToInt32(Console.ReadLine());
@@ -148,6 +145,12 @@ namespace GuessingGameProject
                     }
                 } while (this.UserProp != this.Attempt && this.UserAttempt > 0);
 
+                if(this.UserAttempt <= 0)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"\tAcabaram suas chances! o número era: {this.Attempt}\n");
+                    Console.ResetColor();
+                }
 
             } while (this._game);
             return 1;
